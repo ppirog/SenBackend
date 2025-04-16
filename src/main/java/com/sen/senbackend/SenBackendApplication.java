@@ -1,6 +1,6 @@
 package com.sen.senbackend;
 
-import com.sen.senbackend.infrastructure.security.JwtConfigProperties;
+import com.sen.senbackend.login.infrastructure.security.JwtConfigProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
