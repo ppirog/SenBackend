@@ -11,9 +11,9 @@ import java.util.List;
 
 @Builder
 @Entity
-@Getter(AccessLevel.PACKAGE)
-@Setter(AccessLevel.PACKAGE)
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "app_user", indexes = {
         @Index(name = "idx_login", columnList = "login")
