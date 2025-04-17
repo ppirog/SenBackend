@@ -4,7 +4,6 @@ import com.sen.senbackend.login.loginandregister.UserRepository;
 import com.sen.senbackend.model.GameSession;
 import com.sen.senbackend.repository.GameSessionRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
