@@ -3,6 +3,7 @@ package com.sen.senbackend.service;
 import com.sen.senbackend.login.loginandregister.UserRepository;
 import com.sen.senbackend.model.GameSession;
 import com.sen.senbackend.repository.GameSessionRepository;
+import com.sen.senbackend.exception.GameLogicException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,18 +39,73 @@ public class GameService {
     }
 
     public GameSession getGameSessionByIdAndPlayer(Long sessionId, String login) {
-        Long userId = userRepository.findByLogin(login)
-                .orElseThrow(() -> new RuntimeException("User not found"))
-                .getId();
+        Long userId = getUserIdByLogin(login);
+        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
+        return session;
+    }
 
-        GameSession session = gameSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Game session not found"));
+    public GameSession swapCardWithDiscard(Long sessionId, String login, int cardIndex) {
+        Long userId = getUserIdByLogin(login);
+        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
 
-        if (!session.getPlayerId().equals(userId)) {
-            throw new RuntimeException("Access denied to this game session");
+        if (session.getLastActionRound() == session.getRoundNumber()) {
+            throw new GameLogicException("You have already ended your turn this round.");
         }
 
-        return session;
+        if (cardIndex < 0 || cardIndex >= session.getPlayerCards().size()) {
+            throw new GameLogicException("Invalid card index.");
+        }
+
+        List<Integer> playerCards = session.getPlayerCards();
+        List<Integer> discardPile = session.getDiscardPile();
+
+        if (discardPile.isEmpty()) {
+            throw new GameLogicException("Discard pile is empty, cannot swap.");
+        }
+
+        Integer cardFromHand = playerCards.get(cardIndex);
+        Integer cardFromDiscard = discardPile.remove(discardPile.size() - 1);
+
+        playerCards.set(cardIndex, cardFromDiscard);
+        discardPile.add(cardFromHand);
+
+        session.setLastActionRound(session.getRoundNumber());
+        session.setRoundNumber(session.getRoundNumber() + 1);
+
+        return gameSessionRepository.save(session);
+    }
+
+    public GameSession skipSwap(Long sessionId, String login) {
+        Long userId = getUserIdByLogin(login);
+        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
+
+        if (session.getLastActionRound() == session.getRoundNumber()) {
+            throw new GameLogicException("You have already ended your turn this round.");
+        }
+
+        session.setLastActionRound(session.getRoundNumber());
+        session.setRoundNumber(session.getRoundNumber() + 1);
+
+        return gameSessionRepository.save(session);
+    }
+
+    public GameSession drawCardFromDeck(Long sessionId, String login) {
+        Long userId = getUserIdByLogin(login);
+        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
+
+        if (session.getLastDrawRound() == session.getRoundNumber()) {
+            throw new GameLogicException("You have already drawn a card this round.");
+        }
+
+        if (session.getDeck().isEmpty()) {
+            throw new GameLogicException("Deck is empty.");
+        }
+
+        Integer drawnCard = session.getDeck().remove(0);
+        session.getDiscardPile().add(drawnCard);
+        session.setLastDrawRound(session.getRoundNumber());
+
+        return gameSessionRepository.save(session);
     }
 
     private List<Integer> createShuffledDeck() {
@@ -73,7 +129,6 @@ public class GameService {
         return deck;
     }
 
-
     private List<Integer> drawCards(List<Integer> deck, int count) {
         List<Integer> cards = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -81,5 +136,21 @@ public class GameService {
         }
         return cards;
     }
-}
 
+    private Long getUserIdByLogin(String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new GameLogicException("User not found."))
+                .getId();
+    }
+
+    private GameSession getSessionByIdAndPlayer(Long sessionId, Long userId) {
+        GameSession session = gameSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new GameLogicException("Game session not found."));
+
+        if (!session.getPlayerId().equals(userId)) {
+            throw new GameLogicException("Access denied to this game session.");
+        }
+
+        return session;
+    }
+}

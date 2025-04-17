@@ -1,6 +1,7 @@
 package com.sen.senbackend.controller;
 
-import com.sen.senbackend.dto.GameStateDTO;
+import com.sen.senbackend.dto.responses.GameStateDTO;
+import com.sen.senbackend.dto.requests.SwapCardRequest;
 import com.sen.senbackend.login.loginandregister.User;
 import com.sen.senbackend.login.loginandregister.UserRepository;
 import com.sen.senbackend.mapper.GameMapper;
@@ -33,6 +34,34 @@ public class GameController {
         String login = principal.getName();
         Long userId = getUserIdByLogin(login);
         GameSession session = gameService.createNewSession(userId);
+        return ResponseEntity.ok(gameMapper.toDto(session));
+    }
+
+    @PatchMapping("/{id}/swap")
+    public ResponseEntity<GameStateDTO> swapCardWithDiscard(
+            @PathVariable Long id,
+            @RequestBody SwapCardRequest request,
+            Principal principal
+    ) {
+        GameSession session = gameService.swapCardWithDiscard(id, principal.getName(), request.getCardIndex());
+        return ResponseEntity.ok(gameMapper.toDto(session));
+    }
+
+    @PostMapping("/{id}/skip-swap")
+    public ResponseEntity<GameStateDTO> skipSwap(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        GameSession session = gameService.skipSwap(id, principal.getName());
+        return ResponseEntity.ok(gameMapper.toDto(session));
+    }
+
+    @PostMapping("/{id}/draw")
+    public ResponseEntity<GameStateDTO> drawCard(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        GameSession session = gameService.drawCardFromDeck(id, principal.getName());
         return ResponseEntity.ok(gameMapper.toDto(session));
     }
 

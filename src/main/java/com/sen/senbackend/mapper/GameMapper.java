@@ -1,6 +1,6 @@
 package com.sen.senbackend.mapper;
 
-import com.sen.senbackend.dto.GameStateDTO;
+import com.sen.senbackend.dto.responses.GameStateDTO;
 import com.sen.senbackend.model.GameSession;
 import org.springframework.stereotype.Component;
 
