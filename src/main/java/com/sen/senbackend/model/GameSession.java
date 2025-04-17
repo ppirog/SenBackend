@@ -37,5 +37,9 @@ public class GameSession {
     private boolean gameOver;
 
     private int roundNumber = 1;
+
+    private int lastActionRound = 0;
+
+    private int lastDrawRound = 0;
 }
 

@@ -11,16 +11,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameStateDTO {
+    private boolean gameOver;
+    private int roundNumber;
+
     private List<Integer> playerCards;
     private List<Integer> aiCards;
-
-    private int deckSize;
-    private Integer deckTop;
-    private List<Integer> deck;
 
     private Integer discardTop;
     private List<Integer> discardPile;
 
-    private boolean gameOver;
-    private int roundNumber;
+    private Integer deckTop;
+    private List<Integer> deck;
+    private int deckSize;
 }

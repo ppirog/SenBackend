@@ -47,6 +47,24 @@ public class GameController {
         return ResponseEntity.ok(gameMapper.toDto(session));
     }
 
+    @PostMapping("/{id}/skip-swap")
+    public ResponseEntity<GameStateDTO> skipSwap(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        GameSession session = gameService.skipSwap(id, principal.getName());
+        return ResponseEntity.ok(gameMapper.toDto(session));
+    }
+
+    @PostMapping("/{id}/draw")
+    public ResponseEntity<GameStateDTO> drawCard(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        GameSession session = gameService.drawCardFromDeck(id, principal.getName());
+        return ResponseEntity.ok(gameMapper.toDto(session));
+    }
+
     private Long getUserIdByLogin(String login) {
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with login: " + login));
