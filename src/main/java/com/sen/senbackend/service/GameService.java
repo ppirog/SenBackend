@@ -52,6 +52,43 @@ public class GameService {
         return session;
     }
 
+    public GameSession swapCardWithDiscard(Long sessionId, String login, int cardIndex) {
+        Long userId = userRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
+
+        GameSession session = gameSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new RuntimeException("Game session not found"));
+
+        if (!session.getPlayerId().equals(userId)) {
+            throw new RuntimeException("Access denied to this game session");
+        }
+
+        if (cardIndex < 0 || cardIndex >= session.getPlayerCards().size()) {
+            throw new IllegalArgumentException("Invalid card index");
+        }
+
+        List<Integer> playerCards = session.getPlayerCards();
+        List<Integer> discardPile = session.getDiscardPile();
+
+        if (discardPile.isEmpty()) {
+            throw new RuntimeException("Discard pile is empty, cannot swap");
+        }
+
+        // 🔁 Zamiana kart
+        Integer cardFromHand = playerCards.get(cardIndex);
+        Integer cardFromDiscard = discardPile.remove(discardPile.size() - 1);
+
+        playerCards.set(cardIndex, cardFromDiscard);
+        discardPile.add(cardFromHand);
+
+        // 🔄 Inkrementacja rundy
+        session.setRoundNumber(session.getRoundNumber() + 1);
+
+        return gameSessionRepository.save(session);
+    }
+
+
     private List<Integer> createShuffledDeck() {
         List<Integer> deck = new ArrayList<>();
 

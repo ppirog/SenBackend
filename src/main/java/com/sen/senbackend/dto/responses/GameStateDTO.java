@@ -1,4 +1,4 @@
-package com.sen.senbackend.dto;
+package com.sen.senbackend.dto.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
