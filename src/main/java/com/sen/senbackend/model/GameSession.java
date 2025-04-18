@@ -38,8 +38,11 @@ public class GameSession {
 
     private int roundNumber = 1;
 
+    private int gameRound = 1;
+
     private int lastActionRound = 0;
 
     private int lastDrawRound = 0;
+
 }
 
