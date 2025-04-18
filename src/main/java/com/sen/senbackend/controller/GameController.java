@@ -1,10 +1,12 @@
 package com.sen.senbackend.controller;
 
 import com.sen.senbackend.dto.responses.GameStateDTO;
+import com.sen.senbackend.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.dto.responses.WakeUpResponseDto;
 import com.sen.senbackend.dto.requests.SwapCardRequest;
 import com.sen.senbackend.login.loginandregister.User;
 import com.sen.senbackend.login.loginandregister.UserRepository;
-import com.sen.senbackend.mapper.GameMapper;
+import com.sen.senbackend.wrapper.GameWrapper;
 import com.sen.senbackend.model.GameSession;
 import com.sen.senbackend.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/game")
@@ -20,13 +23,13 @@ import java.security.Principal;
 public class GameController {
 
     private final GameService gameService;
-    private final GameMapper gameMapper;
+    private final GameWrapper gameWrapper;
     private final UserRepository userRepository;
 
     @GetMapping("/{id}/state")
     public ResponseEntity<GameStateDTO> getGameState(@PathVariable Long id, Principal principal) {
         GameSession session = gameService.getGameSessionByIdAndPlayer(id, principal.getName());
-        return ResponseEntity.ok(gameMapper.toDto(session));
+        return ResponseEntity.ok(gameWrapper.build(session));
     }
 
     @PostMapping("/start")
@@ -34,7 +37,7 @@ public class GameController {
         String login = principal.getName();
         Long userId = getUserIdByLogin(login);
         GameSession session = gameService.createNewSession(userId);
-        return ResponseEntity.ok(gameMapper.toDto(session));
+        return ResponseEntity.ok(gameWrapper.build(session));
     }
 
     @PatchMapping("/{id}/swap")
@@ -44,7 +47,7 @@ public class GameController {
             Principal principal
     ) {
         GameSession session = gameService.swapCardWithDiscard(id, principal.getName(), request.getCardIndex());
-        return ResponseEntity.ok(gameMapper.toDto(session));
+        return ResponseEntity.ok(gameWrapper.build(session));
     }
 
     @PostMapping("/{id}/skip-swap")
@@ -53,7 +56,7 @@ public class GameController {
             Principal principal
     ) {
         GameSession session = gameService.skipSwap(id, principal.getName());
-        return ResponseEntity.ok(gameMapper.toDto(session));
+        return ResponseEntity.ok(gameWrapper.build(session));
     }
 
     @PostMapping("/{id}/draw")
@@ -62,7 +65,20 @@ public class GameController {
             Principal principal
     ) {
         GameSession session = gameService.drawCardFromDeck(id, principal.getName());
-        return ResponseEntity.ok(gameMapper.toDto(session));
+        return ResponseEntity.ok(gameWrapper.build(session));
+    }
+
+    @PostMapping("/{id}/wake-up")
+    public ResponseEntity<WakeUpResponseDto> wakeUp(@PathVariable Long id, Principal principal) {
+        return ResponseEntity.ok(gameService.wakeUp(id, principal.getName()));
+    }
+
+    @GetMapping("/{id}/rounds")
+    public ResponseEntity<List<RoundHistoryDto>> getRoundHistory(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(gameService.getRoundHistory(id, principal.getName()));
     }
 
     private Long getUserIdByLogin(String login) {

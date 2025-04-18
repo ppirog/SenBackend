@@ -13,6 +13,7 @@ import java.util.List;
 public class GameStateDTO {
     private boolean gameOver;
     private int roundNumber;
+    private int gameRound;
 
     private List<Integer> playerCards;
     private List<Integer> aiCards;
@@ -23,4 +24,9 @@ public class GameStateDTO {
     private Integer deckTop;
     private List<Integer> deck;
     private int deckSize;
+
+    private List<RoundHistoryDto> roundHistory;
+
+    private int totalPlayerPoints;
+    private int totalAiPoints;
 }
