@@ -50,6 +50,7 @@ public class GameWrapper {
                 .roundHistory(roundHistory)
                 .totalPlayerPoints(totalPlayerPoints)
                 .totalAiPoints(totalAiPoints)
+                .lastActionMessage(session.getLastActionMessage())
                 .build();
     }
 

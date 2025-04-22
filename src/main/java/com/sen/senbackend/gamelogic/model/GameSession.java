@@ -44,5 +44,6 @@ public class GameSession {
 
     private int lastDrawRound = 0;
 
+    private String lastActionMessage;
 }
 

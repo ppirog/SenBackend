@@ -17,6 +17,7 @@ public class GameStateDTO {
 
     private List<Integer> playerCards;
     private List<Integer> aiCards;
+    private String lastActionMessage;
 
     private Integer discardTop;
     private List<Integer> discardPile;
