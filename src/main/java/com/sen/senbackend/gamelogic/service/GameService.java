@@ -2,16 +2,15 @@ package com.sen.senbackend.gamelogic.service;
 
 import com.sen.senbackend.ai.AiStrategy;
 import com.sen.senbackend.ai.AiStrategyManager;
-import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
 import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
-import com.sen.senbackend.login.loginandregister.UserRepository;
+import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
+import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import com.sen.senbackend.gamelogic.model.GameRoundResult;
 import com.sen.senbackend.gamelogic.model.GameSession;
 import com.sen.senbackend.gamelogic.repository.GameRoundResultRepository;
 import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
-import com.sen.senbackend.gamelogic.exception.GameLogicException;
+import com.sen.senbackend.login.loginandregister.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,8 +48,7 @@ public class GameService {
 
     public GameSession getGameSessionByIdAndPlayer(Long sessionId, String login) {
         Long userId = getUserIdByLogin(login);
-        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
-        return session;
+        return getSessionByIdAndPlayer(sessionId, userId);
     }
 
     public GameSession swapCardWithDiscard(Long sessionId, String login, int cardIndex) {
