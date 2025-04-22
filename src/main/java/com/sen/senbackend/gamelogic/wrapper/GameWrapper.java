@@ -1,10 +1,10 @@
-package com.sen.senbackend.wrapper;
+package com.sen.senbackend.gamelogic.wrapper;
 
-import com.sen.senbackend.dto.responses.GameStateDTO;
-import com.sen.senbackend.dto.responses.RoundHistoryDto;
-import com.sen.senbackend.model.GameRoundResult;
-import com.sen.senbackend.model.GameSession;
-import com.sen.senbackend.repository.GameRoundResultRepository;
+import com.sen.senbackend.gamelogic.dto.responses.GameStateDTO;
+import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.gamelogic.model.GameRoundResult;
+import com.sen.senbackend.gamelogic.model.GameSession;
+import com.sen.senbackend.gamelogic.repository.GameRoundResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +50,7 @@ public class GameWrapper {
                 .roundHistory(roundHistory)
                 .totalPlayerPoints(totalPlayerPoints)
                 .totalAiPoints(totalAiPoints)
+                .lastActionMessage(session.getLastActionMessage())
                 .build();
     }
 

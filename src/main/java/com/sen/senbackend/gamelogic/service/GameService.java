@@ -1,13 +1,15 @@
-package com.sen.senbackend.service;
+package com.sen.senbackend.gamelogic.service;
 
-import com.sen.senbackend.dto.responses.WakeUpResponseDto;
-import com.sen.senbackend.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.ai.AiStrategy;
+import com.sen.senbackend.ai.AiStrategyManager;
+import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
+import com.sen.senbackend.gamelogic.exception.GameLogicException;
+import com.sen.senbackend.gamelogic.model.GameRoundResult;
+import com.sen.senbackend.gamelogic.model.GameSession;
+import com.sen.senbackend.gamelogic.repository.GameRoundResultRepository;
+import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
 import com.sen.senbackend.login.loginandregister.UserRepository;
-import com.sen.senbackend.model.GameRoundResult;
-import com.sen.senbackend.model.GameSession;
-import com.sen.senbackend.repository.GameRoundResultRepository;
-import com.sen.senbackend.repository.GameSessionRepository;
-import com.sen.senbackend.exception.GameLogicException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,10 @@ public class GameService {
     private final GameSessionRepository gameSessionRepository;
     private final GameRoundResultRepository roundResultRepository;
     private final UserRepository userRepository;
+    private final AiStrategyManager aiStrategyManager;
 
-    public GameSession createNewSession(Long userId) {
+
+    public GameSession createNewSession(Long userId, String strategyName) {
         List<Integer> deck = createShuffledDeck();
         List<Integer> playerCards = drawCards(deck, 4);
         List<Integer> aiCards = drawCards(deck, 4);
@@ -37,14 +41,14 @@ public class GameService {
         session.setAiCards(aiCards);
         session.setDiscardPile(discardPile);
         session.setGameOver(false);
+        session.setAiStrategyName(strategyName);
 
         return gameSessionRepository.save(session);
     }
 
     public GameSession getGameSessionByIdAndPlayer(Long sessionId, String login) {
         Long userId = getUserIdByLogin(login);
-        GameSession session = getSessionByIdAndPlayer(sessionId, userId);
-        return session;
+        return getSessionByIdAndPlayer(sessionId, userId);
     }
 
     public GameSession swapCardWithDiscard(Long sessionId, String login, int cardIndex) {
@@ -79,6 +83,10 @@ public class GameService {
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
 
+        // AI
+        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
+        aiStrategy.makeMove(session);
+
         return gameSessionRepository.save(session);
     }
 
@@ -96,6 +104,10 @@ public class GameService {
 
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
+
+        // AI
+        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
+        aiStrategy.makeMove(session);
 
         return gameSessionRepository.save(session);
     }

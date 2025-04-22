@@ -1,6 +1,6 @@
-package com.sen.senbackend.repository;
+package com.sen.senbackend.gamelogic.repository;
 
-import com.sen.senbackend.model.GameSession;
+import com.sen.senbackend.gamelogic.model.GameSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

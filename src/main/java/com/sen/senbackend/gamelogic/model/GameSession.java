@@ -1,4 +1,4 @@
-package com.sen.senbackend.model;
+package com.sen.senbackend.gamelogic.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,5 +44,8 @@ public class GameSession {
 
     private int lastDrawRound = 0;
 
+    private String lastActionMessage;
+
+    private String aiStrategyName;
 }
 

@@ -1,4 +1,4 @@
-package com.sen.senbackend.dto.responses;
+package com.sen.senbackend.gamelogic.dto.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +17,7 @@ public class GameStateDTO {
 
     private List<Integer> playerCards;
     private List<Integer> aiCards;
+    private String lastActionMessage;
 
     private Integer discardTop;
     private List<Integer> discardPile;
