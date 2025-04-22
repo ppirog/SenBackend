@@ -1,14 +1,14 @@
-package com.sen.senbackend.controller;
+package com.sen.senbackend.gamelogic.controller;
 
-import com.sen.senbackend.dto.responses.GameStateDTO;
-import com.sen.senbackend.dto.responses.RoundHistoryDto;
-import com.sen.senbackend.dto.responses.WakeUpResponseDto;
-import com.sen.senbackend.dto.requests.SwapCardRequest;
+import com.sen.senbackend.gamelogic.dto.responses.GameStateDTO;
+import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
+import com.sen.senbackend.gamelogic.dto.requests.SwapCardRequest;
 import com.sen.senbackend.login.loginandregister.User;
 import com.sen.senbackend.login.loginandregister.UserRepository;
-import com.sen.senbackend.wrapper.GameWrapper;
-import com.sen.senbackend.model.GameSession;
-import com.sen.senbackend.service.GameService;
+import com.sen.senbackend.gamelogic.wrapper.GameWrapper;
+import com.sen.senbackend.gamelogic.model.GameSession;
+import com.sen.senbackend.gamelogic.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,7 +1,7 @@
 package com.sen.senbackend.login.infrastructure.errorvalidation;
 
-import com.sen.senbackend.exception.GameLogicException;
-import com.sen.senbackend.exception.dto.GameLogicErrorResponseDto;
+import com.sen.senbackend.gamelogic.exception.GameLogicException;
+import com.sen.senbackend.gamelogic.exception.dto.GameLogicErrorResponseDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,4 +1,4 @@
-package com.sen.senbackend.dto.responses;
+package com.sen.senbackend.gamelogic.dto.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

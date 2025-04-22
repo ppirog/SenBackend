@@ -1,4 +1,4 @@
-package com.sen.senbackend.exception.dto;
+package com.sen.senbackend.gamelogic.exception.dto;
 
 import lombok.Builder;
 import lombok.Data;

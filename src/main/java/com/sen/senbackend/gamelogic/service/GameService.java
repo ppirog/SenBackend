@@ -1,13 +1,13 @@
-package com.sen.senbackend.service;
+package com.sen.senbackend.gamelogic.service;
 
-import com.sen.senbackend.dto.responses.WakeUpResponseDto;
-import com.sen.senbackend.dto.responses.RoundHistoryDto;
+import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
+import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
 import com.sen.senbackend.login.loginandregister.UserRepository;
-import com.sen.senbackend.model.GameRoundResult;
-import com.sen.senbackend.model.GameSession;
-import com.sen.senbackend.repository.GameRoundResultRepository;
-import com.sen.senbackend.repository.GameSessionRepository;
-import com.sen.senbackend.exception.GameLogicException;
+import com.sen.senbackend.gamelogic.model.GameRoundResult;
+import com.sen.senbackend.gamelogic.model.GameSession;
+import com.sen.senbackend.gamelogic.repository.GameRoundResultRepository;
+import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
+import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

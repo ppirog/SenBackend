@@ -1,4 +1,4 @@
-package com.sen.senbackend.model;
+package com.sen.senbackend.gamelogic.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

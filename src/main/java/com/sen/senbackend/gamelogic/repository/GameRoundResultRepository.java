@@ -1,6 +1,6 @@
-package com.sen.senbackend.repository;
+package com.sen.senbackend.gamelogic.repository;
 
-import com.sen.senbackend.model.GameRoundResult;
+import com.sen.senbackend.gamelogic.model.GameRoundResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
