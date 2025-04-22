@@ -1,5 +1,7 @@
 package com.sen.senbackend.gamelogic.service;
 
+import com.sen.senbackend.ai.AiStrategy;
+import com.sen.senbackend.ai.AiStrategyManager;
 import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
 import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
 import com.sen.senbackend.login.loginandregister.UserRepository;
@@ -9,6 +11,7 @@ import com.sen.senbackend.gamelogic.repository.GameRoundResultRepository;
 import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
 import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,8 +24,10 @@ public class GameService {
     private final GameSessionRepository gameSessionRepository;
     private final GameRoundResultRepository roundResultRepository;
     private final UserRepository userRepository;
+    private final AiStrategyManager aiStrategyManager;
 
-    public GameSession createNewSession(Long userId) {
+
+    public GameSession createNewSession(Long userId, String strategyName) {
         List<Integer> deck = createShuffledDeck();
         List<Integer> playerCards = drawCards(deck, 4);
         List<Integer> aiCards = drawCards(deck, 4);
@@ -37,6 +42,7 @@ public class GameService {
         session.setAiCards(aiCards);
         session.setDiscardPile(discardPile);
         session.setGameOver(false);
+        session.setAiStrategyName(strategyName);
 
         return gameSessionRepository.save(session);
     }
@@ -79,6 +85,10 @@ public class GameService {
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
 
+        // AI
+        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
+        aiStrategy.makeMove(session);
+
         return gameSessionRepository.save(session);
     }
 
@@ -96,6 +106,10 @@ public class GameService {
 
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
+
+        // AI
+        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
+        aiStrategy.makeMove(session);
 
         return gameSessionRepository.save(session);
     }

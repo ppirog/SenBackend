@@ -33,12 +33,16 @@ public class GameController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<GameStateDTO> startGame(Principal principal) {
+    public ResponseEntity<GameStateDTO> startGame(
+            Principal principal,
+            @RequestParam(defaultValue = "random") String strategy
+    ) {
         String login = principal.getName();
         Long userId = getUserIdByLogin(login);
-        GameSession session = gameService.createNewSession(userId);
+        GameSession session = gameService.createNewSession(userId, strategy);
         return ResponseEntity.ok(gameWrapper.build(session));
     }
+
 
     @PatchMapping("/{id}/swap")
     public ResponseEntity<GameStateDTO> swapCardWithDiscard(
