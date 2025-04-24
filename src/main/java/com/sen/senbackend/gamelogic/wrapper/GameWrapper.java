@@ -37,6 +37,7 @@ public class GameWrapper {
                 .sum();
 
         return GameStateDTO.builder()
+                .id(session.getId().toString())
                 .playerCards(session.getPlayerCards())
                 .aiCards(session.getAiCards())
                 .deckSize(session.getDeck().size())
