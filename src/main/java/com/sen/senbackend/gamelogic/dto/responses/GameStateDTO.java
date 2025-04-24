@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameStateDTO {
+    private String id;
     private boolean gameOver;
     private int roundNumber;
     private int gameRound;
