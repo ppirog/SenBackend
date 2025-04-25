@@ -43,6 +43,9 @@ public class GameService {
         session.setGameOver(false);
         session.setAiStrategyName(strategyName);
 
+        String message = "First card value: " + playerCards.get(0) + " and second card value: " + playerCards.get(1);
+        session.setLastActionMessage(message);
+
         return gameSessionRepository.save(session);
     }
 
@@ -196,6 +199,9 @@ public class GameService {
         session.setRoundNumber(1);
         session.setLastDrawRound(0);
         session.setLastActionRound(0);
+
+        String message = "First card value: " + newPlayer.get(0) + " and second card value: " + newPlayer.get(1);
+        session.setLastActionMessage(message);
 
         gameSessionRepository.save(session);
 
