@@ -4,6 +4,7 @@ import com.sen.senbackend.gamelogic.dto.responses.FrontendGameStateDTO;
 import com.sen.senbackend.gamelogic.dto.responses.GameStateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 @Component
 @RequiredArgsConstructor
 public class FrontendGameWrapper {

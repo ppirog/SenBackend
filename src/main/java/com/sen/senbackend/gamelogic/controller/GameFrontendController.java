@@ -1,7 +1,6 @@
 package com.sen.senbackend.gamelogic.controller;
 
 import com.sen.senbackend.gamelogic.dto.responses.FrontendGameStateDTO;
-import com.sen.senbackend.gamelogic.dto.responses.GameStateDTO;
 import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
 import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
 import com.sen.senbackend.gamelogic.dto.requests.SwapCardRequest;
