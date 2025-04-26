@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 public class AiStrategyManager {
 
     private final RandomSwapStrategy randomSwapStrategy;
+    private final EmbeddedSwapStrategy embeddedSwapStrategy;
 
     public AiStrategy getStrategy(String strategyName) {
         return switch (strategyName.toLowerCase()) {
             case "random" -> randomSwapStrategy;
+            case "embedded" -> embeddedSwapStrategy;
             default -> throw new GameLogicException("Unknown AI strategy: " + strategyName);
         };
     }

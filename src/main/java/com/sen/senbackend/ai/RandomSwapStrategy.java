@@ -27,7 +27,7 @@ public class RandomSwapStrategy implements AiStrategy {
         boolean canDrawFromDeck = !deck.isEmpty();
 
         if (!canDrawFromDeck && !canDrawFromDiscard) {
-            String msg = "Automatyczny przeciwnik nie wykonał ruchu — brak kart do dobrania.";
+            String msg = "Losowy automatyczny przeciwnik nie wykonał ruchu — brak kart do dobrania.";
             session.setLastActionMessage(msg);
             gameSessionRepository.save(session);
             return msg;
@@ -52,7 +52,7 @@ public class RandomSwapStrategy implements AiStrategy {
         discardPile.add(oldCard);
 
         String message = String.format(
-                "Automatyczny przeciwnik zamienił kartę z talii %s z karta na indeksie %d",
+                "Losowy automatyczny przeciwnik zamienił kartę z talii %s z karta na indeksie %d",
                 source,
                 indexToReplace
         );
