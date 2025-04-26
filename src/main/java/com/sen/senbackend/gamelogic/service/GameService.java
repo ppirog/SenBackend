@@ -1,7 +1,7 @@
 package com.sen.senbackend.gamelogic.service;
 
-import com.sen.senbackend.ai.ml.PlayerMove;
-import com.sen.senbackend.ai.ml.PlayerMoveRepository;
+import com.sen.senbackend.ai.ml.model.PlayerMove;
+import com.sen.senbackend.ai.ml.repository.PlayerMoveRepository;
 import com.sen.senbackend.ai.AiStrategyManager;
 import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
 import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
@@ -126,7 +126,7 @@ public class GameService {
         }
 
         if (session.getLastDrawRound() == session.getRoundNumber()) {
-            throw new GameLogicException("You have already drawn a card this round.");
+            throw new GameLogicException("You have already drawn a card from the deck this round. Now you must either swap the drawn card with one of your cards or skip the swap!");
         }
 
         if (session.getDeck().isEmpty()) {
