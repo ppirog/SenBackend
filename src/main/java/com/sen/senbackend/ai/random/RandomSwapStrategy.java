@@ -1,6 +1,7 @@
 package com.sen.senbackend.ai.random;
 
 import com.sen.senbackend.ai.AiStrategy;
+import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import com.sen.senbackend.gamelogic.model.GameSession;
 import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +48,14 @@ public class RandomSwapStrategy implements AiStrategy {
             source = "zakrytej";
         }
 
-        int indexToReplace = random.nextInt(aiCards.size());
+        int indexToReplace = findIndexOfWeakestCard(aiCards);
+
         Integer oldCard = aiCards.get(indexToReplace);
         aiCards.set(indexToReplace, drawnCard);
         discardPile.add(oldCard);
 
         String message = String.format(
-                "Losowy automatyczny przeciwnik zamienił kartę z talii %s z karta na indeksie %d",
+                "Losowy automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
                 source,
                 indexToReplace
         );
@@ -62,5 +64,19 @@ public class RandomSwapStrategy implements AiStrategy {
         gameSessionRepository.save(session);
 
         return message;
+    }
+
+    private int findIndexOfWeakestCard(List<Integer> cards) {
+        int maxIndex = 0;
+        int maxValue = cards.get(0);
+
+        for (int i = 1; i < cards.size(); i++) {
+            if (cards.get(i) > maxValue) {
+                maxValue = cards.get(i);
+                maxIndex = i;
+            }
+        }
+
+        return maxIndex;
     }
 }
