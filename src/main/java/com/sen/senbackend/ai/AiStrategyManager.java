@@ -1,5 +1,7 @@
 package com.sen.senbackend.ai;
 
+import com.sen.senbackend.ai.embedded.EmbeddedSwapStrategy;
+import com.sen.senbackend.ai.random.RandomSwapStrategy;
 import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
