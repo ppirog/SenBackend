@@ -25,7 +25,6 @@ public class GameService {
     private final UserRepository userRepository;
     private final AiStrategyManager aiStrategyManager;
 
-
     public GameSession createNewSession(Long userId, String strategyName) {
         List<Integer> deck = createShuffledDeck();
         List<Integer> playerCards = drawCards(deck, 4);
@@ -90,6 +89,8 @@ public class GameService {
         AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
         aiStrategy.makeMove(session);
 
+        checkAndWakeUpIfDeckEmpty(session);
+
         return gameSessionRepository.save(session);
     }
 
@@ -112,6 +113,8 @@ public class GameService {
         AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
         aiStrategy.makeMove(session);
 
+        checkAndWakeUpIfDeckEmpty(session);
+
         return gameSessionRepository.save(session);
     }
 
@@ -128,12 +131,15 @@ public class GameService {
         }
 
         if (session.getDeck().isEmpty()) {
-            throw new GameLogicException("Deck is empty.");
+            checkAndWakeUpIfDeckEmpty(session);
+            return session;
         }
 
         Integer drawnCard = session.getDeck().remove(0);
         session.getDiscardPile().add(drawnCard);
         session.setLastDrawRound(session.getRoundNumber());
+
+        checkAndWakeUpIfDeckEmpty(session);
 
         return gameSessionRepository.save(session);
     }
@@ -174,7 +180,7 @@ public class GameService {
         // ❌ Jeśli któryś przekroczył 100 pkt → gra się kończy
         if (totalPlayerPoints > 100 || totalAiPoints > 100) {
             session.setGameOver(true);
-            gameSessionRepository.save(session); // zapisujemy tylko status gameOver
+            gameSessionRepository.save(session);
 
             return WakeUpResponseDto.builder()
                     .gameRound(currentGameRound)
@@ -213,7 +219,6 @@ public class GameService {
                 .build();
     }
 
-
     public List<RoundHistoryDto> getRoundHistory(Long sessionId, String login) {
         Long userId = getUserIdByLogin(login);
         GameSession session = getSessionByIdAndPlayer(sessionId, userId);
@@ -227,6 +232,14 @@ public class GameService {
                         .aiPoints(result.getAiPoints())
                         .build())
                 .toList();
+    }
+
+    private void checkAndWakeUpIfDeckEmpty(GameSession session) {
+        if (session.getDeck().isEmpty()) {
+            wakeUp(session.getId(), userRepository.findById(session.getPlayerId())
+                    .orElseThrow(() -> new GameLogicException("User not found."))
+                    .getLogin());
+        }
     }
 
     private List<Integer> createShuffledDeck() {
