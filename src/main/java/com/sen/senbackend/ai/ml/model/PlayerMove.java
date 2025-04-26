@@ -1,4 +1,4 @@
-package com.sen.senbackend.ai.ml;
+package com.sen.senbackend.ai.ml.model;
 
 import jakarta.persistence.*;
 import lombok.*;
