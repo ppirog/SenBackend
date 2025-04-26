@@ -1,5 +1,6 @@
-package com.sen.senbackend.ai;
+package com.sen.senbackend.ai.random;
 
+import com.sen.senbackend.ai.AiStrategy;
 import com.sen.senbackend.gamelogic.model.GameSession;
 import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
 import lombok.RequiredArgsConstructor;

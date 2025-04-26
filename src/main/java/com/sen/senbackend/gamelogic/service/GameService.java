@@ -1,6 +1,7 @@
 package com.sen.senbackend.gamelogic.service;
 
-import com.sen.senbackend.ai.AiStrategy;
+import com.sen.senbackend.ai.ml.PlayerMove;
+import com.sen.senbackend.ai.ml.PlayerMoveRepository;
 import com.sen.senbackend.ai.AiStrategyManager;
 import com.sen.senbackend.gamelogic.dto.responses.RoundHistoryDto;
 import com.sen.senbackend.gamelogic.dto.responses.WakeUpResponseDto;
@@ -13,17 +14,19 @@ import com.sen.senbackend.login.loginandregister.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Service
 @AllArgsConstructor
+@Service
 public class GameService {
     private final GameSessionRepository gameSessionRepository;
     private final GameRoundResultRepository roundResultRepository;
     private final UserRepository userRepository;
     private final AiStrategyManager aiStrategyManager;
+    private final PlayerMoveRepository playerMoveRepository;
 
     public GameSession createNewSession(Long userId, String strategyName) {
         List<Integer> deck = createShuffledDeck();
@@ -85,9 +88,7 @@ public class GameService {
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
 
-        // AI
-        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
-        aiStrategy.makeMove(session);
+        aiStrategyManager.getStrategy(session.getAiStrategyName()).makeMove(session);
 
         checkAndWakeUpIfDeckEmpty(session);
 
@@ -109,9 +110,7 @@ public class GameService {
         session.setLastActionRound(session.getRoundNumber());
         session.setRoundNumber(session.getRoundNumber() + 1);
 
-        // AI
-        AiStrategy aiStrategy = aiStrategyManager.getStrategy(session.getAiStrategyName());
-        aiStrategy.makeMove(session);
+        aiStrategyManager.getStrategy(session.getAiStrategyName()).makeMove(session);
 
         checkAndWakeUpIfDeckEmpty(session);
 
@@ -136,6 +135,10 @@ public class GameService {
         }
 
         Integer drawnCard = session.getDeck().remove(0);
+
+        // 👉 Oceniamy ruch i zapisujemy w player_moves
+        evaluateAndSavePlayerMove(session, drawnCard);
+
         session.getDiscardPile().add(drawnCard);
         session.setLastDrawRound(session.getRoundNumber());
 
@@ -157,7 +160,6 @@ public class GameService {
         int currentGameRound = session.getGameRound();
         int moves = session.getRoundNumber();
 
-        // 🧾 Zapisz wynik rundy
         GameRoundResult result = new GameRoundResult();
         result.setGameSessionId(sessionId);
         result.setRoundNumber(currentGameRound);
@@ -165,9 +167,7 @@ public class GameService {
         result.setAiPoints(aiPoints);
         roundResultRepository.save(result);
 
-        // ➕ Pobierz wszystkie rozegrane rundy i podsumuj punkty
-        List<GameRoundResult> allRounds = roundResultRepository
-                .findByGameSessionIdOrderByRoundNumber(sessionId);
+        List<GameRoundResult> allRounds = roundResultRepository.findByGameSessionIdOrderByRoundNumber(sessionId);
 
         int totalPlayerPoints = allRounds.stream()
                 .mapToInt(GameRoundResult::getPlayerPoints)
@@ -177,7 +177,6 @@ public class GameService {
                 .mapToInt(GameRoundResult::getAiPoints)
                 .sum();
 
-        // ❌ Jeśli któryś przekroczył 100 pkt → gra się kończy
         if (totalPlayerPoints > 100 || totalAiPoints > 100) {
             session.setGameOver(true);
             gameSessionRepository.save(session);
@@ -190,7 +189,6 @@ public class GameService {
                     .build();
         }
 
-        // 🔄 Reset gry – nowe rozdanie
         List<Integer> newDeck = createShuffledDeck();
         List<Integer> newPlayer = drawCards(newDeck, 4);
         List<Integer> newAi = drawCards(newDeck, 4);
@@ -233,6 +231,40 @@ public class GameService {
                         .build())
                 .toList();
     }
+
+    private void evaluateAndSavePlayerMove(GameSession session, Integer drawnCard) {
+        List<Integer> playerCards = session.getPlayerCards();
+        Integer weakestCard = playerCards.stream()
+                .max(Integer::compareTo)
+                .orElseThrow(() -> new GameLogicException("Empty hand."));
+
+        Integer discardTop = session.getDiscardPile() != null && !session.getDiscardPile().isEmpty()
+                ? session.getDiscardPile().get(session.getDiscardPile().size() - 1)
+                : null;
+
+        double averageCardValue = playerCards.stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
+
+        Integer differenceWeakestToDiscardTop = (discardTop != null) ? (weakestCard - discardTop) : null;
+
+        boolean goodDecision = drawnCard < weakestCard
+                && (discardTop == null || drawnCard <= discardTop);
+
+        PlayerMove move = new PlayerMove();
+        move.setSessionId(session.getId());
+        move.setRoundNumber(session.getRoundNumber());
+        move.setWeakestCard(weakestCard);
+        move.setDiscardTop(discardTop);
+        move.setAverageCardValue(averageCardValue);
+        move.setDifferenceWeakestToDiscardTop(differenceWeakestToDiscardTop);
+        move.setGoodDecision(goodDecision);
+        move.setCreatedAt(LocalDateTime.now());
+
+        playerMoveRepository.save(move);
+    }
+
 
     private void checkAndWakeUpIfDeckEmpty(GameSession session) {
         if (session.getDeck().isEmpty()) {
