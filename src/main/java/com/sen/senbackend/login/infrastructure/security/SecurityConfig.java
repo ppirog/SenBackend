@@ -46,8 +46,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/api/login/**").permitAll()
+                        .requestMatchers("/api/register/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
