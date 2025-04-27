@@ -12,9 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 public class SenBackendApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SenBackendApplication.class, args);
     }
-
 }

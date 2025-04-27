@@ -20,11 +20,8 @@ class UserUpdater {
     UserResponseDto updateByLogin(String login, UserRequestDto requestDto) {
         final User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("User" + login + " not found"));
-        log.info("User found: {}", user);
         final User updated = userMapper.mapToUser(requestDto);
-
         userRepository.updateLoginAndPasswordById(requestDto.login(), requestDto.password(), user.getId());
-        log.info("User updated: {}", updated);
         return userMapper.mapToUserResponseDto(updated);
     }
 }
