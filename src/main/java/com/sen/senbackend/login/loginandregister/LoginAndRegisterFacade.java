@@ -23,10 +23,8 @@ public class LoginAndRegisterFacade {
     }
 
     public UserResponseDto findByUsername(String username) {
-
         final User user = userRepository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User: " + username + " not found"));
-        log.info("User found: {}", user);
         return userMapper.mapToUserResponseDto(user);
     }
 

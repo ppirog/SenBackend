@@ -25,27 +25,23 @@ public class LoginAndRegisterRestController {
     public ResponseEntity<RegisterResponseDto> registerUser(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
         final UserResponseDto userResponseDto = loginAndRegisterFacade.register(mapper.fromReqisterRequestDto(registerRequestDto));
         final RegisterResponseDto registered = mapper.fromUserResponseDto(userResponseDto, "REGISTERED");
-        log.info("User registered: {}", registered);
         return ResponseEntity.status(HttpStatus.CREATED).body(registered);
     }
 
     @GetMapping("/find/{login}")
     public ResponseEntity<UserResponseDto> findUser(@PathVariable String login) {
         final UserResponseDto byUsername = loginAndRegisterFacade.findByUsername(login);
-        log.info("User found: {}", byUsername);
         return ResponseEntity.ok(byUsername);
     }
 
     @PutMapping("/update/{login}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable String login, @RequestBody @Valid RegisterRequestDto registerRequestDto) {
         final UserResponseDto body = loginAndRegisterFacade.updateByLogin(login, mapper.fromReqisterRequestDto(registerRequestDto));
-        log.info("User updated: {}", body);
         return ResponseEntity.ok(body);
     }
 
     @DeleteMapping("/delete/{login}")
     public ResponseEntity<UserResponseDto> deleteUser(@PathVariable String login) {
-        log.info("Deleting user: {}", login);
         return ResponseEntity.ok(loginAndRegisterFacade.deleteUser(login));
     }
 }
