@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Log4j2
 @AllArgsConstructor
+@RequestMapping("/api")
 public class LoginAndRegisterRestController {
 
     private final LoginAndRegisterFacade loginAndRegisterFacade;
