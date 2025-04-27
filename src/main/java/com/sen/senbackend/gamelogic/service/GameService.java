@@ -136,7 +136,7 @@ public class GameService {
 
         Integer drawnCard = session.getDeck().remove(0);
 
-        // 👉 Oceniamy ruch i zapisujemy w player_moves
+        // Oceniamy ruch i zapisujemy w player_moves
         evaluateAndSavePlayerMove(session, drawnCard);
 
         session.getDiscardPile().add(drawnCard);

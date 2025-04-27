@@ -17,7 +17,10 @@ public class GameRoundResult {
     private Long id;
 
     private Long gameSessionId;
+
     private int roundNumber;
+
     private int playerPoints;
+
     private int aiPoints;
 }
