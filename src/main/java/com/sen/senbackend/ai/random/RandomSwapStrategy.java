@@ -1,7 +1,6 @@
 package com.sen.senbackend.ai.random;
 
 import com.sen.senbackend.ai.AiStrategy;
-import com.sen.senbackend.gamelogic.exception.GameLogicException;
 import com.sen.senbackend.gamelogic.model.GameSession;
 import com.sen.senbackend.gamelogic.repository.GameSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class RandomSwapStrategy implements AiStrategy {
         boolean canDrawFromDeck = !deck.isEmpty();
 
         if (!canDrawFromDeck && !canDrawFromDiscard) {
-            String msg = "Losowy automatyczny przeciwnik nie wykonał ruchu — brak kart do dobrania.";
+            String msg = "Random AI opponent could not make a move — no cards to draw.";
             session.setLastActionMessage(msg);
             gameSessionRepository.save(session);
             return msg;
@@ -42,10 +41,10 @@ public class RandomSwapStrategy implements AiStrategy {
 
         if (drawFromDiscard) {
             drawnCard = discardPile.remove(discardPile.size() - 1);
-            source = "odkrytej";
+            source = "discard pile";
         } else {
             drawnCard = deck.remove(0);
-            source = "zakrytej";
+            source = "deck";
         }
 
         int indexToReplace = findIndexOfWeakestCard(aiCards);
@@ -55,7 +54,7 @@ public class RandomSwapStrategy implements AiStrategy {
         discardPile.add(oldCard);
 
         String message = String.format(
-                "Losowy automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                "Random AI opponent swapped a card from the %s with the card at index %d.",
                 source,
                 indexToReplace
         );

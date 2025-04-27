@@ -29,7 +29,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
         boolean canDrawFromDeck = !deck.isEmpty();
 
         if (!canDrawFromDeck && !canDrawFromDiscard) {
-            String msg = "ML automatyczny przeciwnik nie wykonał ruchu — brak kart do dobrania.";
+            String msg = "ML AI opponent could not make a move — no cards to draw.";
             session.setLastActionMessage(msg);
             gameSessionRepository.save(session);
             return msg;
@@ -53,9 +53,9 @@ public class MachineLearningSwapStrategy implements AiStrategy {
         String source;
 
         if (shouldTakeFromDeck && canDrawFromDeck) {
-            // ✅ Decyzja ML: Dobieramy z zakrytej
+            // ML - dobieramy z zakrytej
             drawnCard = deck.remove(0);
-            source = "zakrytej";
+            source = "deck";
 
             if (drawnCard < weakestCard) {
                 int indexToReplace = findIndexOfWeakestCard(aiCards);
@@ -64,7 +64,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
                 discardPile.add(oldCard);
 
                 String message = String.format(
-                        "ML automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                        "ML AI opponent swapped a card from the %s with the card at index %d.",
                         source,
                         indexToReplace
                 );
@@ -76,7 +76,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
                 discardPile.add(drawnCard);
 
                 String message = String.format(
-                        "ML automatyczny przeciwnik dobrał kartę z talii %s, ale nie wymienił, odłożył na stos odrzuceń",
+                        "ML AI opponent drew a card from the %s but did not swap, placed it on the discard pile.",
                         source
                 );
 
@@ -85,9 +85,9 @@ public class MachineLearningSwapStrategy implements AiStrategy {
                 return message;
             }
         } else if (canDrawFromDiscard) {
-            // ✅ Decyzja ML: Dobieramy z odkrytej
+            // ML - dobieramy z odkrytej
             drawnCard = discardPile.remove(discardPile.size() - 1);
-            source = "odkrytej";
+            source = "discard pile";
 
             int indexToReplace = findIndexOfWeakestCard(aiCards);
             Integer oldCard = aiCards.get(indexToReplace);
@@ -95,7 +95,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
             discardPile.add(oldCard);
 
             String message = String.format(
-                    "ML automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                    "ML AI opponent swapped a card from the %s with the card at index %d.",
                     source,
                     indexToReplace
             );
@@ -104,9 +104,9 @@ public class MachineLearningSwapStrategy implements AiStrategy {
             gameSessionRepository.save(session);
             return message;
         } else {
-            // fallback: brak discard, dobieramy z zakrytej
+            // brak discard, dobieramy z zakrytej
             drawnCard = deck.remove(0);
-            source = "zakrytej";
+            source = "deck";
 
             if (drawnCard < weakestCard) {
                 int indexToReplace = findIndexOfWeakestCard(aiCards);
@@ -115,7 +115,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
                 discardPile.add(oldCard);
 
                 String message = String.format(
-                        "ML automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                        "ML AI opponent swapped a card from the %s with the card at index %d.",
                         source,
                         indexToReplace
                 );
@@ -127,7 +127,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
                 discardPile.add(drawnCard);
 
                 String message = String.format(
-                        "ML automatyczny przeciwnik dobrał kartę z talii %s, ale nie wymienił, odłożył na stos odrzuceń",
+                        "ML AI opponent drew a card from the %s but did not swap, placed it on the discard pile.",
                         source
                 );
 
@@ -141,7 +141,7 @@ public class MachineLearningSwapStrategy implements AiStrategy {
     private int findWeakestCard(List<Integer> cards) {
         return cards.stream()
                 .max(Integer::compareTo)
-                .orElseThrow(() -> new GameLogicException("AI hand is empty – cannot find the weakest card."));
+                .orElseThrow(() -> new GameLogicException("AI hand is empty — cannot find the weakest card."));
     }
 
     private int findIndexOfWeakestCard(List<Integer> cards) {

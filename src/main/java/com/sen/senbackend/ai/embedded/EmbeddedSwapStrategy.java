@@ -27,7 +27,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
         boolean canDrawFromDeck = !deck.isEmpty();
 
         if (!canDrawFromDeck && !canDrawFromDiscard) {
-            String msg = "Wbudowany automatyczny przeciwnik nie wykonał ruchu — brak kart do dobrania.";
+            String msg = "Embedded AI opponent could not make a move — no cards to draw.";
             session.setLastActionMessage(msg);
             gameSessionRepository.save(session);
             return msg;
@@ -47,7 +47,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
 
         if (drawFromDiscard) {
             drawnCard = discardPile.remove(discardPile.size() - 1);
-            source = "odkrytej";
+            source = "discard pile";
 
             int indexToReplace = findIndexOfWeakestCard(aiCards);
             Integer oldCard = aiCards.get(indexToReplace);
@@ -55,7 +55,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
             discardPile.add(oldCard);
 
             String message = String.format(
-                    "Wbudowany automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                    "Embedded AI opponent swapped a card from the %s with the card at index %d.",
                     source,
                     indexToReplace
             );
@@ -66,7 +66,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
 
         } else {
             drawnCard = deck.remove(0);
-            source = "zakrytej";
+            source = "deck";
 
             int weakestCard = findWeakestCard(aiCards);
 
@@ -78,7 +78,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
                 discardPile.add(oldCard);
 
                 String message = String.format(
-                        "Wbudowany automatyczny przeciwnik zamienił kartę z talii %s z kartą na indeksie %d",
+                        "Embedded AI opponent swapped a card from the %s with the card at index %d.",
                         source,
                         indexToReplace
                 );
@@ -92,7 +92,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
                 discardPile.add(drawnCard);
 
                 String message = String.format(
-                        "Wbudowany automatyczny przeciwnik dobrał kartę z talii %s, ale nie wymienił, odłożył na stos odrzuceń",
+                        "Embedded AI opponent drew a card from the %s but did not swap, placed it on the discard pile.",
                         source
                 );
 
@@ -106,7 +106,7 @@ public class EmbeddedSwapStrategy implements AiStrategy {
     private int findWeakestCard(List<Integer> cards) {
         return cards.stream()
                 .max(Integer::compareTo)
-                .orElseThrow(() -> new GameLogicException("AI hand is empty – cannot find the weakest card."));
+                .orElseThrow(() -> new GameLogicException("AI hand is empty — cannot find the weakest card."));
     }
 
     private int findIndexOfWeakestCard(List<Integer> cards) {
