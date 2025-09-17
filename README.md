@@ -38,6 +38,8 @@ Appliaction deployed on public cloud.
 # Frontend
 https://github.com/ppirog/SenFrontend
 
+# Test Automation (Playwright)
+https://github.com/ppirog/SenTestAutomation
 
 
 
